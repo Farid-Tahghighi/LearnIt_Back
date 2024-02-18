@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { User } from "../models/User.js";
+import { User, validateUser } from "../models/User.js";
 import _ from "lodash";
 import Joi from "joi";
 import "dotenv/config";
@@ -47,7 +47,7 @@ router.post("/signup", async (req, res) => {
   );
   user.password = await bcrypt.hash(user.password, 10);
   await user.save();
-  const token = user.generateAuthToken();
+  console.log("HELLO MARK");
   res.send(_.pick(user, ["name", "age", "email", "gender"]));
 });
 

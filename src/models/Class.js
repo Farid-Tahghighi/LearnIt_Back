@@ -13,6 +13,8 @@ const classSchema = new mongoose.Schema({
   startTime: { type: Date, required: true },
   finishTime: { type: Date },
   location: { type: String, required: true },
+  category: { type: String, required: true },
+  description: { type: String, min: 30, max: 150 },
 });
 
 const schema = Joi.object({
@@ -23,6 +25,8 @@ const schema = Joi.object({
   startTime: Joi.date().required(),
   finishTime: Joi.date(),
   location: Joi.string().required(),
+  category: Joi.string().required(),
+  description: Joi.string().min(30).max(150),
 });
 
 const validateClass = (v) => {

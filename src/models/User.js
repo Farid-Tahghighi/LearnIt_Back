@@ -31,7 +31,6 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    unique: true,
     validate: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       "Email not valid",
@@ -52,7 +51,7 @@ const User = mongoose.model("User", userSchema);
 const schema = Joi.object({
   name: Joi.string().min(2).max(50).required(),
   age: Joi.number().required(),
-  gender: Joi.string().valid("Male", "Female", "Prefer not to say"),
+  gender: Joi.string().valid("Male", "Female", "Not Set"),
   type: Joi.string().valid("Student", "Teacher", "Moderator"),
   password: jpc(complexityOptions),
   email: Joi.string().email().required(),

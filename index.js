@@ -4,6 +4,7 @@ const app = express();
 import classes from "./src/controllers/classes.js";
 import users from "./src/controllers/users.js";
 import subjects from "./src/controllers/subjects.js";
+import statics from "./src/controllers/statics.js";
 import "dotenv/config";
 import auth from "./src/controllers/auth.js";
 import cors from "cors";
@@ -33,6 +34,7 @@ app.use("/api/classes", classes);
 app.use("/api/users", users);
 app.use("/api/subjects", subjects);
 app.use("/api/auth", auth);
+app.use("/statics", statics);
 
 const port = process.env.PORT;
 app.listen(port, () => {

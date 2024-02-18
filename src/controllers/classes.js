@@ -3,9 +3,10 @@ const router = express.Router();
 import { Class, validateClass } from "../models/Class.js";
 import { User } from "../models/User.js";
 import { Subject } from "../models/Subject.js";
-import moment from "moment";
 import auth from "../middlewares/auth.js";
 import checkMod from "../middlewares/IsMod.js";
+import mongoose from "mongoose";
+import checkCategory from "../middlewares/checkCategory.js";
 
 router.get("/users/:id", async (req, res) => {
   const classes = await Class.find({
@@ -27,6 +28,11 @@ router.get("/:id", async (req, res) => {
       .send("Class with id " + req.params.id + " doesn't exist");
   }
   res.send(clss);
+});
+
+router.get("/categories/:category", checkCategory, async (req, res) => {
+  const classes = await Class.find({ category: req.params.category });
+  res.send(classes)
 });
 
 router.put("/:Id", async (req, res) => {
@@ -66,9 +72,14 @@ router.post("/", async (req, res) => {
   }
   const subject = await Subject.findById(req.body.subjectId);
   if (!subject) return res.status(400).send("Invalid Subject.");
-  const participants = await User.find({ _id: { $in: req.body.userIds } });
+  let participants = new Array();
+  for (let i = 0; i < req.body.participantIds.length; i++) {
+    const participant = await User.findById(req.body.participantIds[0]);
+    participants.push(participant);
+  }
   if (!participants) return res.status(400).send("Invalid Participants.");
   const presenter = await User.findById(req.body.presenterId);
+  console.log(presenter);
   if (!presenter) return res.status(400).send("Invalid Presenter.");
   const startTime = moment().format(req.body.startTime);
   const finishTime = moment().format(req.body.finishTime);
@@ -80,6 +91,8 @@ router.post("/", async (req, res) => {
     startTime: startTime,
     finishTime: finishTime,
     location: req.body.location,
+    category: req.body.category,
+    description: req.body.description,
   });
   await clss.save();
   res.send(clss);
