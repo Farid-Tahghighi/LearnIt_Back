@@ -47,7 +47,6 @@ router.post("/signup", async (req, res) => {
   );
   user.password = await bcrypt.hash(user.password, 10);
   await user.save();
-  console.log("HELLO MARK");
   res.send(_.pick(user, ["name", "age", "email", "gender"]));
 });
 

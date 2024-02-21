@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  description: {
+    type: String,
+    min: 20,
+    max: 150,
+  },
   password: {
     type: String,
     required: true,
@@ -53,6 +58,7 @@ const schema = Joi.object({
   age: Joi.number().required(),
   gender: Joi.string().valid("Male", "Female", "Not Set"),
   type: Joi.string().valid("Student", "Teacher", "Moderator"),
+  description: Joi.string().min(20).max(150),
   password: jpc(complexityOptions),
   email: Joi.string().email().required(),
 });

@@ -9,7 +9,7 @@ const classSchema = new mongoose.Schema({
   subject: { type: subjectSchema, required: true },
   participants: [{ type: userSchema, required: true }],
   presenter: { type: userSchema, required: true },
-  plan: [{ type: String, required: true }],
+  plNan: [{ type: String, required: true }],
   startTime: { type: Date, required: true },
   finishTime: { type: Date },
   location: { type: String, required: true },
