@@ -1,3 +1,4 @@
+import "express-async-errors";
 import express from "express";
 import mongoose from "mongoose";
 const app = express();
@@ -8,6 +9,7 @@ import statics from "./src/controllers/statics.js";
 import "dotenv/config";
 import auth from "./src/controllers/auth.js";
 import cors from "cors";
+import error from "./src/middlewares/error.js";
 
 if (!process.env.JWT_SECRET_KEY) {
   console.error("FATAL ERROR: jwtPrivateKey is not defined!");
@@ -15,9 +17,12 @@ if (!process.env.JWT_SECRET_KEY) {
 }
 
 mongoose
-  .connect("mongodb://0.0.0.0:27017/CFT")
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB..."))
-  .catch((err) => console.log("Error ", err));
+  .catch((err) => {
+    console.log("Error ", err);
+    process.exit(1);
+  });
 
 const corsOptions = {
   exposedHeaders: "x-auth-token",
@@ -30,6 +35,7 @@ app.use("/api/users", users);
 app.use("/api/subjects", subjects);
 app.use("/api/auth", auth);
 app.use("/statics", statics);
+app.use(error);
 
 const port = process.env.PORT;
 app.listen(port, () => {
