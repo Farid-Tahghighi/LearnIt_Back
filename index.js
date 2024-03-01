@@ -16,9 +16,10 @@ if (!process.env.JWT_SECRET_KEY) {
   process.exit(1);
 }
 
+const port = process.env.PORT;
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("Connected to MongoDB..."))
+  .then(() => app.listen(port))
   .catch((err) => {
     console.log("Error ", err);
     process.exit(1);
@@ -28,6 +29,10 @@ const corsOptions = {
   exposedHeaders: "x-auth-token",
 };
 
+app.get("/", (req, res) => {
+  res.send({ title: "Books" });
+});
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/classes", classes);
@@ -36,8 +41,3 @@ app.use("/api/subjects", subjects);
 app.use("/api/auth", auth);
 app.use("/statics", statics);
 app.use(error);
-
-const port = process.env.PORT;
-app.listen(port, () => {
-  console.log("Listening on port " + port + "...");
-});
