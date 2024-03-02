@@ -29,10 +29,6 @@ const corsOptions = {
   exposedHeaders: "x-auth-token",
 };
 
-app.get("/", (req, res) => {
-  res.send({ title: "Books" });
-});
-
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/classes", classes);

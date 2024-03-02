@@ -7,16 +7,16 @@ const subjectSchema = new mongoose.Schema({
   resources: [{ type: String }],
 });
 
-const Subject = mongoose.model("Subject", subjectSchema);
+const Subject = mongoose.model("Subject", subjectSchema);z
 
 const schema = Joi.object({
-  title: Joi.string().min(1).required(),
+  title: Joi.string().min(3).required(),
   credit: Joi.number().valid(1, 3, 6).required(),
-  resources: Joi.array().items(Joi.string()),
+  resources: Joi.string(),
 });
 
-const validateSubject = async (body) => {
-  return await schema.validateAsync(body);
+const validateSubject = (body) => {
+  return schema.validate(body);
 };
 
 export { Subject, subjectSchema, validateSubject };

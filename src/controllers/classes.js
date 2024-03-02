@@ -40,17 +40,17 @@ router.get(
 );
 
 router.put(
-  "/:Id",
+  "/:id",
   asyncErr(async (req, res) => {
     const { error } = validateClass(req.body);
-    const subject = await Subject.findById(req.body.subjectId);
+    const subject = await Subject.findOne(req.body.subjectTitle);
     if (!subject) return res.status(400).send("Invalid Subject.");
     const participants = await User.find({ _id: { $in: req.body.userIds } });
     if (!participants) return res.status(400).send("Invalid Participants.");
     const presenter = await User.findById(req.body.presenterId);
     if (!presenter) return res.status(400).send("Invalid Presenter.");
-    const startTime = moment().format(req.body.startTime);
-    const finishTime = moment().format(req.body.finishTime);
+    const startDate = new Date(req.body.startDate);
+    const finishDate = new Date(req.body.finishDate);
     if (error) return res.status(400).send(error.details[0].message);
     const clss = Class.findByIdAndUpdate(
       req.params.id,
@@ -59,8 +59,8 @@ router.put(
         participants: participants,
         presenter: presenter,
         plan: req.body.plan,
-        startTime: startTime,
-        finishTime: finishTime,
+        startDate: startDate,
+        finishDate: finishDate,
         location: req.body.location,
       },
       {
@@ -80,7 +80,7 @@ router.post(
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
-    const subject = await Subject.findById(req.body.subjectId);
+    const subject = await Subject.findBy(req.body.subjectTitle);
     if (!subject) return res.status(400).send("Invalid Subject.");
     let participants = new Array();
     for (let i = 0; i < req.body.participantIds.length; i++) {
@@ -90,15 +90,15 @@ router.post(
     if (!participants) return res.status(400).send("Invalid Participants.");
     const presenter = await User.findById(req.body.presenterId);
     if (!presenter) return res.status(400).send("Invalid Presenter.");
-    const startTime = moment().format(req.body.startTime);
-    const finishTime = moment().format(req.body.finishTime);
+    const startDate = new Date(req.body.startDate);
+    const finishDate = new Date(req.body.finishDate);
     let clss = new Class({
       subject: subject,
       participants: participants,
       presenter: presenter,
       plan: req.body.plan,
-      startTime: startTime,
-      finishTime: finishTime,
+      startDate: startDate,
+      finishDate: finishDate,
       location: req.body.location,
       category: req.body.category,
       description: req.body.description,

@@ -18,12 +18,12 @@ const classSchema = new mongoose.Schema({
 });
 
 const schema = Joi.object({
-  subjectId: Joi.objectId().required(),
+  subjectTitle: Joi.string().required(),
   participantIds: Joi.array().items(Joi.objectId()).required(),
   presenterId: Joi.objectId().required(),
-  plan: Joi.array().items(Joi.string()).required(),
-  startTime: Joi.date().required(),
-  finishTime: Joi.date(),
+  plan: Joi.array().items(Joi.string()),
+  startِDate: Joi.date().required(),
+  finishDate: Joi.date(),
   location: Joi.string().required(),
   category: Joi.string().required(),
   description: Joi.string().min(30).max(150),
