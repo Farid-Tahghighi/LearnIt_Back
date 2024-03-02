@@ -18,8 +18,12 @@ if (!process.env.JWT_SECRET_KEY) {
 
 const port = process.env.PORT;
 mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => app.listen(port))
+  .connect(process.env.MONGO_DEV_URI)
+  .then(() => {
+    console.log("Connected to MongoDB...");
+    app.listen(port);
+    console.log(`Listening on port ${port}...`);
+  })
   .catch((err) => {
     console.log("Error ", err);
     process.exit(1);

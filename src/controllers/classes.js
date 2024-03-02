@@ -72,15 +72,13 @@ router.put(
   })
 );
 
-router.post(
-  "/",
-  checkTeacher,
-  asyncErr(async (req, res) => {
+router.post("/", asyncErr(async (req, res) => {
     const { error } = validateClass(req.body);
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
-    const subject = await Subject.findBy(req.body.subjectTitle);
+    console.log(req.body.subjectTitle);
+    const subject = await Subject.findOne({ title: req.body.subjectTitle });
     if (!subject) return res.status(400).send("Invalid Subject.");
     let participants = new Array();
     for (let i = 0; i < req.body.participantIds.length; i++) {

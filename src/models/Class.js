@@ -22,7 +22,7 @@ const schema = Joi.object({
   participantIds: Joi.array().items(Joi.objectId()).required(),
   presenterId: Joi.objectId().required(),
   plan: Joi.array().items(Joi.string()),
-  startِDate: Joi.date().required(),
+  startDate: Joi.date().required(),
   finishDate: Joi.date(),
   location: Joi.string().required(),
   category: Joi.string().required(),

@@ -4,7 +4,7 @@ import Joi from "joi";
 const subjectSchema = new mongoose.Schema({
   title: { type: String, required: true },
   credit: { type: Number, min: 1, max: 6, required: true },
-  resources: [{ type: String }],
+  resources: { type: String },
 });
 
 const Subject = mongoose.model("Subject", subjectSchema);
