@@ -7,7 +7,7 @@ const subjectSchema = new mongoose.Schema({
   resources: [{ type: String }],
 });
 
-const Subject = mongoose.model("Subject", subjectSchema);z
+const Subject = mongoose.model("Subject", subjectSchema);
 
 const schema = Joi.object({
   title: Joi.string().min(3).required(),
