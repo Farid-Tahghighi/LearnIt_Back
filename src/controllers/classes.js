@@ -6,7 +6,7 @@ import { Subject } from "../models/Subject.js";
 import auth from "../middlewares/auth.js";
 import checkCategory from "../middlewares/checkCategory.js";
 import checkMod from "../middlewares/isMod.js";
-import checkTeacher from "../middlewares/isTeacher.js";
+// import checkTeacher from "../middlewares/isTeacher.js";
 import asyncErr from "../middlewares/asyncErrorHandler.js";
 
 router.get(
@@ -72,12 +72,13 @@ router.put(
   })
 );
 
-router.post("/", asyncErr(async (req, res) => {
+router.post(
+  "/",
+  asyncErr(async (req, res) => {
     const { error } = validateClass(req.body);
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
-    console.log(req.body.subjectTitle);
     const subject = await Subject.findOne({ title: req.body.subjectTitle });
     if (!subject) return res.status(400).send("Invalid Subject.");
     let participants = new Array();
@@ -112,6 +113,25 @@ router.delete(
   asyncErr(async (req, res) => {
     const clss = await Class.findByIdAndDelete(req.params.id);
     if (!clss) return res.status(400).send("Invalid Class.");
+    res.send(clss);
+  })
+);
+
+router.post(
+  "/participate",
+  auth,
+  asyncErr(async (req, res) => {
+    // Data validation...
+    const clss = await Class.findById(req.body.classId);
+    if (!clss) return res.status(400).send("Class not found.");
+    const user = await User.findById(req.body.userId);
+    if (!user) return res.status(400).send("User not found.");
+    clss.participants.forEach((p) => {
+      if (p.id == user.id)
+        return res.status(400).send("User has already enrolled in this class.");
+    });
+    clss.participants.addToSet(user);
+    await clss.save();
     res.send(clss);
   })
 );
