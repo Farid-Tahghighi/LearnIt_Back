@@ -21,11 +21,7 @@ router.get(
   "/:id",
   asyncErr(async (req, res) => {
     const clss = await Class.findById(req.params.id);
-    if (!clss) {
-      return res
-        .status(400)
-        .send("Class with id " + req.params.id + " doesn't exist");
-    }
+    if (!clss) return res.status(400).send("Class not found.");
     res.send(clss);
   })
 );
@@ -43,16 +39,19 @@ router.put(
   "/:id",
   asyncErr(async (req, res) => {
     const { error } = validateClass(req.body);
-    const subject = await Subject.findOne(req.body.subjectTitle);
-    if (!subject) return res.status(400).send("Invalid Subject.");
-    const participants = await User.find({ _id: { $in: req.body.userIds } });
-    if (!participants) return res.status(400).send("Invalid Participants.");
-    const presenter = await User.findById(req.body.presenterId);
-    if (!presenter) return res.status(400).send("Invalid Presenter.");
-    const startDate = new Date(req.body.startDate);
-    const finishDate = new Date(req.body.finishDate);
     if (error) return res.status(400).send(error.details[0].message);
-    const clss = Class.findByIdAndUpdate(
+    console.log(req.body);
+    const subject = await Subject.findOne({ title: req.body.subject });
+    if (!subject) return res.status(400).send("Invalid Subject.");
+    const participants = await User.find({
+      email: { $in: req.body.participants },
+    });
+    if (!participants) return res.status(400).send("Invalid Participants.");
+    const presenter = await User.findOne({ email: req.body.presenter });
+    if (!presenter) return res.status(400).send("Invalid Presenter.");
+    const startDate = new Date(req.body.startdate).setHours(0);
+    const finishDate = new Date(req.body.finishdate).setHours(0);
+    const clss = await Class.findByIdAndUpdate(
       req.params.id,
       {
         subject: subject,
@@ -62,11 +61,14 @@ router.put(
         startDate: startDate,
         finishDate: finishDate,
         location: req.body.location,
+        description: req.body.description,
+        category: req.body.category,
       },
-      {
+      { 
         new: true,
       }
     );
+    console.log(clss);
     if (!clss) return res.status(400).send("Invalid Class.");
     res.send(clss);
   })
@@ -75,22 +77,20 @@ router.put(
 router.post(
   "/",
   asyncErr(async (req, res) => {
+    console.log(req.body);
     const { error } = validateClass(req.body);
-    if (error) {
-      return res.status(400).send(error.details[0].message);
-    }
-    const subject = await Subject.findOne({ title: req.body.subjectTitle });
+    if (error) return res.status(400).send(error.details[0].message);
+    const subject = await Subject.findOne({ title: req.body.subject });
     if (!subject) return res.status(400).send("Invalid Subject.");
-    let participants = new Array();
-    for (let i = 0; i < req.body.participantIds.length; i++) {
-      const participant = await User.findById(req.body.participantIds[0]);
-      participants.push(participant);
-    }
+    console.log(req.body.participants);
+    const participants = await User.find({
+      email: { $in: req.body.participants },
+    });
     if (!participants) return res.status(400).send("Invalid Participants.");
-    const presenter = await User.findById(req.body.presenterId);
+    const presenter = await User.findOne({ email: req.body.presenter });
     if (!presenter) return res.status(400).send("Invalid Presenter.");
-    const startDate = new Date(req.body.startDate);
-    const finishDate = new Date(req.body.finishDate);
+    const startDate = new Date(req.body.startdate).setHours(0);
+    const finishDate = new Date(req.body.finishdate).setHours(0);
     let clss = new Class({
       subject: subject,
       participants: participants,
@@ -112,7 +112,7 @@ router.delete(
   [auth, checkMod],
   asyncErr(async (req, res) => {
     const clss = await Class.findByIdAndDelete(req.params.id);
-    if (!clss) return res.status(400).send("Invalid Class.");
+    if (!clss) return res.status(400).send("Class not found.");
     res.send(clss);
   })
 );

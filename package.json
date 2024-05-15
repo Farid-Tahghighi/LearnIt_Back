@@ -20,7 +20,6 @@
     "joi-objectid": "^4.0.2",
     "joi-password-complexity": "^5.2.0",
     "jsonwebtoken": "^9.0.2",
-    "lodash": "^4.17.21",
     "mongoose": "^8.1.0",
     "nodemon": "^3.0.3"
   }

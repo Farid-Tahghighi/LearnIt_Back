@@ -58,13 +58,25 @@ const schema = Joi.object({
   age: Joi.number().required(),
   gender: Joi.string().valid("Male", "Female", "Not Set"),
   type: Joi.string().valid("Student", "Teacher", "Moderator"),
-  description: Joi.string().min(20).max(150),
   password: jpc(complexityOptions),
   email: Joi.string().email().required(),
 });
+
+const editSchema = Joi.object({
+  name: Joi.string().min(2).max(50).required(),
+  age: Joi.number().required(),
+  gender: Joi.string().valid("Male", "Female", "Not Set"),
+  type: Joi.string().valid("Student", "Teacher", "Moderator"),
+  description: Joi.string().min(20).max(150),
+  email: Joi.string().email().required(),
+});
+
+const validateEditUser = (newuUser) => {
+  return editSchema.validate(newuUser);
+};
 
 const validateUser = (user) => {
   return schema.validate(user);
 };
 
-export { User, userSchema, validateUser };
+export { User, userSchema, validateUser, validateEditUser };

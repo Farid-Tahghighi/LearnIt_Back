@@ -41,4 +41,4 @@ app.use("/api/subjects", subjects);
 app.use("/api/sessions", sessions);
 app.use("/api/auth", auth);
 app.use("/statics", statics);
-app.use(error);
+// app.use(error);
