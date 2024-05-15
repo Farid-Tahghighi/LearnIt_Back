@@ -4,11 +4,12 @@ import { Session, validateSession } from "../models/Session.js";
 import asyncErr from "../middlewares/asyncErrorHandler.js";
 import isTeacher from "../middlewares/isTeacher.js";
 import auth from "../middlewares/auth.js";
+import { User } from "../models/User.js";
 
 router.get(
   "/:classId",
   asyncErr(async (req, res) => {
-    const sessions = await Session.find();
+    const sessions = await Session.find({ classId: req.params.classId });
     return res.send(sessions);
   })
 );
@@ -35,6 +36,27 @@ router.post(
       date: req.body.date,
     });
     await session.save();
+    res.send(session);
+  })
+);
+
+router.post(
+  "/:classId",
+  [auth, isTeacher],
+  asyncErr(async (req, res) => {
+    console.log(req.body.present);
+    if (!req.body.present) return res.status(400).send("Bad request.");
+    const present = await User.find({ email: { $in: req.body.present } });
+    console.log(present);
+    if (!present) return res.status(400).send("Present people not found.");
+    const session = await Session.findByIdAndUpdate(
+      req.body.sessionId,
+      {
+        present: present,
+      },
+      { new: true }
+    );
+    if (!session) return res.status(400).send("Session not found.");
     res.send(session);
   })
 );

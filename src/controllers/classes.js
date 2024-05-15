@@ -40,7 +40,6 @@ router.put(
   asyncErr(async (req, res) => {
     const { error } = validateClass(req.body);
     if (error) return res.status(400).send(error.details[0].message);
-    console.log(req.body);
     const subject = await Subject.findOne({ title: req.body.subject });
     if (!subject) return res.status(400).send("Invalid Subject.");
     const participants = await User.find({
@@ -51,6 +50,7 @@ router.put(
     if (!presenter) return res.status(400).send("Invalid Presenter.");
     const startDate = new Date(req.body.startdate).setHours(0);
     const finishDate = new Date(req.body.finishdate).setHours(0);
+    console.log(req.params.id);
     const clss = await Class.findByIdAndUpdate(
       req.params.id,
       {
@@ -77,12 +77,10 @@ router.put(
 router.post(
   "/",
   asyncErr(async (req, res) => {
-    console.log(req.body);
     const { error } = validateClass(req.body);
     if (error) return res.status(400).send(error.details[0].message);
     const subject = await Subject.findOne({ title: req.body.subject });
     if (!subject) return res.status(400).send("Invalid Subject.");
-    console.log(req.body.participants);
     const participants = await User.find({
       email: { $in: req.body.participants },
     });
