@@ -37,6 +37,7 @@ router.get(
 
 router.put(
   "/:id",
+  [auth, checkMod],
   asyncErr(async (req, res) => {
     const { error } = validateClass(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -48,9 +49,8 @@ router.put(
     if (!participants) return res.status(400).send("Invalid Participants.");
     const presenter = await User.findOne({ email: req.body.presenter });
     if (!presenter) return res.status(400).send("Invalid Presenter.");
-    const startDate = new Date(req.body.startdate).setHours(0);
-    const finishDate = new Date(req.body.finishdate).setHours(0);
-    console.log(req.params.id);
+    const startDate = new Date(req.body.startdate);
+    const finishDate = new Date(req.body.finishdate);
     const clss = await Class.findByIdAndUpdate(
       req.params.id,
       {
@@ -64,11 +64,10 @@ router.put(
         description: req.body.description,
         category: req.body.category,
       },
-      { 
+      {
         new: true,
       }
     );
-    console.log(clss);
     if (!clss) return res.status(400).send("Invalid Class.");
     res.send(clss);
   })
@@ -76,6 +75,7 @@ router.put(
 
 router.post(
   "/",
+  [auth, checkMod],
   asyncErr(async (req, res) => {
     const { error } = validateClass(req.body);
     if (error) return res.status(400).send(error.details[0].message);

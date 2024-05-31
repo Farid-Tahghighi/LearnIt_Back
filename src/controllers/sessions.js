@@ -44,10 +44,8 @@ router.post(
   "/:classId",
   [auth, isTeacher],
   asyncErr(async (req, res) => {
-    console.log(req.body.present);
     if (!req.body.present) return res.status(400).send("Bad request.");
     const present = await User.find({ email: { $in: req.body.present } });
-    console.log(present);
     if (!present) return res.status(400).send("Present people not found.");
     const session = await Session.findByIdAndUpdate(
       req.body.sessionId,

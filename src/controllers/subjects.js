@@ -24,6 +24,7 @@ router.get(
 
 router.post(
   "/",
+  [auth, checkMod],
   asyncErr(async (req, res) => {
     const { error } = validateSubject(req.body);
     if (error) return res.status(400).send(error.details[0].message);
